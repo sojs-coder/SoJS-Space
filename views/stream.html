@@ -1,0 +1,34 @@
+{% import "./macros/macros.html" as macros %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href = "/css/blog_stream.css" rel = "stylesheet">
+     <script type="text/javascript">
+      window.onload = function() {
+          if (parent) {
+              var oHead = document.getElementsByTagName("head")[0];
+              var arrStyleSheets = parent.document.getElementsByTagName("style");
+              for (var i = 0; i < arrStyleSheets.length; i++){
+                  oHead.appendChild(arrStyleSheets[i].cloneNode(true));
+              }
+              var AarrStyleSheets = parent.document.getElementsByTagName("link");
+              for (var i = 0; i < AarrStyleSheets.length; i++){
+                  oHead.appendChild(AarrStyleSheets[i].cloneNode(true));
+              }
+          }
+      }
+      </script>
+  </head>
+  <body>
+    <div class  ="blog_stream">
+      {% for post in posts %}
+          <div class = "blog_card">
+            <h1><a target = "_top"href = "/post/{{ post.posts }}">{{ post.title }} </a></h1>
+            <p><i><span data-timestamp = "{{ post.timestamp }}" class = "timestamp"></span></i>
+            <p>{{ post.des }}</p>
+          </div>
+      {% endfor %}
+    </div>
+    <script src = "/js/timestamp-to-date.js"></script>
+  </body>
+</html>

@@ -1,0 +1,121 @@
+{% import "./macros/macros.html" as macros %}
+<!DOCTYPE html>
+<html>
+  <head>
+    
+    {{ macros.head("Blog | SOJS","dark") }}
+    
+    <link href = "/css/blog_stream.css" rel = "stylesheet">
+  </head>
+  <body>
+    
+    {% include "./partials/nav.html" %}
+    <main class = "body">
+      <section class= "body stream-big big slowtext">
+        <div class="heading">
+          <h1 class="display">SOJS Stream</h1>
+          <p class = "byline">Learn to code like a legend.</p>
+
+          <form action = "/search" method = "get">
+            <input name = "q" placeholder="Search"> In: 
+            <select name = "in">
+              <option value = "s">Stream</option>
+              <option value = "b">Blog</option>
+              <option value = "t">Tutorials</option>
+              <option value = "d">Dev Logs</option>
+            </select>
+            <input type = "submit" value = "Go">
+          </form>
+          {% if (isMobile != true) %}
+          <div class = "blog_nav">
+            <div class = "navitem active"><a data-frame-point = 's' class = "stream-links">Stream</a></div>
+            <div class = "navitem"><a data-frame-point = 'b' class = "stream-links">Blog</a></div>
+            <div class = "navitem"><a data-frame-point = 't' class = "stream-links">Tutorials</a></div>
+            <div class = "navitem"><a data-frame-point = 'd' class = "stream-links">Dev Logs</a></div>
+          </div>
+          <div class = "display-stream" data-current-in = "s">
+             <div class  ="blog_stream">
+              {% for post in sortedByNewest %}
+                  <div class = "blog_card">
+                    <h1><a target = "_top"href = "/post/{{ post.posts }}">{{ post.title }} </a></h1>
+                    <p><i><span data-timestamp = "{{ post.timestamp }}" class = "timestamp"></span></i>
+                    <p>{{ post.des }}</p>
+                  </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class = "hidden streamer" data-source = "s">
+            <div class  ="blog_stream">
+              {% for post in sortedByNewest %}
+                  <div class = "blog_card">
+                    <h1><a target = "_top"href = "/post/{{ post.posts }}">{{ post.title }}</a></h1>
+                    <p><i><span data-timestamp = "{{ post.timestamp }}" class = "timestamp"></span></i>
+                    <p>{{ post.des }}</p>
+                  </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class = "hidden streamer" data-source = "b">
+            <div class  ="blog_stream">
+              {% for post in sortedByNewest %}
+              {% if (post.under == "b") %}
+                  <div class = "blog_card">
+                    <h1><a target = "_top"href = "/post/{{ post.posts }}">{{ post.title }} </a></h1>
+                    <p><i><span data-timestamp = "{{ post.timestamp }}" class = "timestamp"></span></i>
+                    <p>{{ post.des }}</p>
+                  </div>
+              {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          <div class = "hidden streamer" data-source = "t">
+            <div class  ="blog_stream">
+              {% for post in sortedByNewest %}
+              {% if (post.under == "t") %}
+                  <div class = "blog_card">
+                    <h1><a target = "_top"href = "/post/{{ post.posts }}">{{ post.title }} </a></h1>
+                    <p><i><span data-timestamp = "{{ post.timestamp }}" class = "timestamp"></span></i>
+                    <p>{{ post.des }}</p>
+                  </div>
+              {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          <div class = "hidden streamer" data-source = "d">
+            <div class  ="blog_stream">
+              {% for post in sortedByNewest %}
+              {% if (post.under == "d") %}
+                  <div class = "blog_card">
+                    <h1><a target = "_top"href = "/post/{{ post.posts }}">{{ post.title }} </a></h1>
+                    <p><i><span data-timestamp = "{{ post.timestamp }}" class = "timestamp"></span></i>
+                    <p>{{ post.des }}</p>
+                  </div>
+              {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          
+          {% else %}
+          <div class  ="blog_stream">
+          {% for post in sortedByNewest %}
+        
+            <div class = "blog_card">
+              <h1><a target = "_top"href = "/post/{{ post.posts }}">{{ post.title }} </a></h1>
+              <p><i><span data-timestamp = "{{ post.timestamp }}" class = "timestamp"></span></i>
+              <p>{{ post.des }}</p>
+            </div>
+          {% endfor %}
+        </div>
+          {% endif %}
+        </div>
+      </section>
+      {{ macros.footer() }}
+      <script src = "/js/timestamp-to-date.js"></script>
+    <script src = "/js/blog_top.js">
+    </script>
+    
+    </main>
+    {{ macros.scripts("Your experience with this site will be greatly improved by enabling JavaScript") }}
+  </body>
+</html>
+  

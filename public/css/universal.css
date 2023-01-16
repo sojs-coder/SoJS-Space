@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400&display=swap');
+.align-left{
+  text-align: left;
+}
+.hidden{
+  display: none;
+}
+body{
+  font-family: 'Josefin Sans', sans-serif !important;
+  font-weight: 300;
+/*   font-family: 'Roboto', sans-serif; */
+}
+.blog_tag{
+  font-size: 14px;
+ 
+}
+.green{
+  color: green;
+}
+.b{
+  color: dodgerblue;
+}
+.d{
+  color: #c48000;
+}
+.t{
+  color: #950000;
+}
+video{
+  width: 100%;
+  height: 100%;
+  z-index: -9999;
+  opacity: 0.3;
+/*   position: fixed;
+  top: 0;
+  left: 0; */
+}
+h2{
+  font-size: 40px;
+}
+h3{
+  font-size: 32px;
+}
+body{
+  font-family: sans-serif;
+  margin: 0;
+}
+.display{
+  font-weight: 100;
+  font-size: 83px;
+  margin: 6px;
+}
+.no-margin{
+  margin: 0 !important;
+}
+a{
+  text-decoration: none;
+  font-weight: bold;
+}
+.big{
+  padding: 0px;
+  margin: 0px;
+  margin-top: 30vh;
+  width: 100%;
+  height: 100;
+}
+.center{
+  text-align: center;
+   display: block;
+}
+.vert_center{
+  margin-top: 30vh;
+}
+button{
+  cursor: pointer;
+  padding: 10px;
+}
+.textbox{
+  padding: 12px;
+  border-radius: 2px;
+  margin: 6px;
+}
+input{
+  padding: 6px;
+  border-radius: 2px;
+}
+select{
+  padding: 6px;
+  border-radius: 2px;
+  background: #00000000;
+}
+.heading {
+  text-align: center;
+  display: block;
+  width: 100%;
+  height: 100vh;
+}
+.social a{
+  text-decoration: none;
+  padding: 5px;
+
+}
+.align-left{
+  text-align: left;
+}
+.bottom{
+  position: absolute;
+  display: block;
+  width:100%;
+  bottom: 0;
+  z-index: 2;
+}
+.arrow{
+  text-align: center;
+}
+#arrow_bounce{
+  transition-duration: 500ms;
+  postion: relative;
+  z-index: 100;
+
+}
+.arrow a{
+  font-size: 34px;
+ 
+  font-weight: 900 !important;
+}
+input, textarea{
+  border: 1px solid #666666aa;
+  margin: 6px;
+  border-radius: 2px;
+  background-color: #00000000;
+  padding: 5px;
+}
+.copy{
+  font-weight: 200;
+}
+footer{
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 6px;
+  text-align: left;
+  font-size:  11px;
+  z-index: 0;
+}

@@ -1,0 +1,27 @@
+{% import "./macros/macros.html" as macros %}
+<!DOCTYPE html>
+<html>
+  <head>
+  
+    {{ macros.head("Unsubscribe","dark") }}
+  </head>
+  <body>
+    {% include "./partials/nav.html" %}
+<!--     <video src = "/images/promo.mp4" autoplay muted></video> -->
+    <main class = "body"> 
+      <section class= "body big slowtext">
+        <div class="heading">
+          <h1 class="display">Stop Recieving Email Updates</h1>
+          <p class = "byline">We're sorry to see you go.</p>
+          <form action = "/unsub" method = "POST">
+            <p>Type your email in to unsubscribe</p>
+            <input name = "email" placeholder = "jane.doe@example.com"><input type = "submit" value = "Submit">
+          </form>
+        </div>
+      {{ macros.footer() }}
+      </section>
+      {{ macros.scripts("Your experience with this site will be greatly improved by enabling JavaScript") }}
+    </main>
+    
+  </body>
+</html>

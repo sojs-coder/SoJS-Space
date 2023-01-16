@@ -1,0 +1,27 @@
+.card{
+  max-width: 80%;
+}
+.stream-big{
+  margin-top: 15vh !important;
+}
+.blog_tag{
+   display: block;
+}
+.blog_card{
+  box-sizing: border-box;
+  margin: 0;
+  width: 98% !important;
+  padding: 20px !important;
+  border: none !important;
+  box-shadow: none  !important;
+  border-top: 1px solid #aaa !important;
+  
+}
+.blog-title{
+
+  
+}
+.content,.email_sign,.blog-title{
+  width: 80%;
+  margin-left: 10%;
+}

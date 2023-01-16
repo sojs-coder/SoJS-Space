@@ -1,0 +1,68 @@
+{% import "./macros/macros.html" as macros %}
+<!DOCTYPE html>
+<html>
+  <head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js" integrity="sha512-LhccdVNGe2QMEfI3x4DVV3ckMRe36TfydKss6mJpdHjNFiV07dFpS2xzeZedptKZrwxfICJpez09iNioiSZ3hA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- codeMirror -->
+<!-- Use version 5.0.0 or later. -->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link rel = "stylesheet" href = "/css/mde.css">
+    <link rel = "stylesheet" href = "/css/custom-kothing.css">
+    
+<style>
+      textarea{
+      text-align: left;
+      }
+    </style>
+    {{ macros.head("Update Post | SOJS","light") }}
+  </head>
+  <body>
+    {% include "./partials/nav.html" %}
+    <main class = "body">
+      <section class= "body big slowtext">
+        <div class="heading">
+          <h1 class="display">SOJS</h1>
+          <p class = "byline">Update a post</p>
+          <div class = "top_containter">
+            <div class = "editor_container">
+              <input type = "text" placeholder = "Title" id = "title" value = "{{ post.title }}">Published: <input type = "checkbox" id = "pub" {% if post.published %}checked{% endif %}><input placeholder = "Author" id="author" type = "text" value = "{{ post.author }}" name = "author">
+              <select id = "under">
+                <option value = "b" {% if (post.under == "b") %}selected{% endif %}>Blog</option>
+                <option value = "t" {% if (post.under == "t") %}selected{% endif %}>Tutorials</option>
+                <option value = "d" {% if (post.under == "d") %}selected{% endif %}>Dev Logs</option>
+              </select>
+              <textarea name = "description" id = "description" rows = "3">{{ post.des }}</textarea>
+              <textarea id = "editor"></textarea>
+              
+              <button id="save" class = "save">Save</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+     <script src="/js/mde.js"></script>
+    <script>
+    var conv = new showdown.Converter({
+      simplifiedAutoLink: true,
+      tables: true
+      
+      
+    });
+    var html = conv.makeMarkdown(`{{ post.content | safe }}`);
+      document.getElementById('editor').value = html;
+ $('#editor').markdownEditor({
+      preview: true,
+      onPreview: (content, cb)=>{
+        cb(conv.makeHtml(content))
+      }
+ });
+</script>
+    {{ macros.scripts("Your experience with this site will be greatly improved by enabling JavaScript") }}
+    <script src = "/js/post_update.js"></script>
+  </body>
+</html>

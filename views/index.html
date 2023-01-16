@@ -1,0 +1,46 @@
+{% import "./macros/macros.html" as macros %}
+<!DOCTYPE html>
+<html>
+  <head>
+  
+    {{ macros.head("SOJS","dark") }}
+  </head>
+  <body>
+    {% include "./partials/nav.html" %}
+<!--     <video src = "/images/promo.mp4" autoplay muted></video> -->
+    <main class = "body"> 
+      <section class= "body big slowtext">
+        <div class="heading">
+          <h1 class="display">SOJS</h1>
+          <p class = "byline">Web Design. Game Dev. Back End.</p>
+          <p class = "social"><a href = "https://replit.com/@sojs" target = "_blank">Replit</a>|<a href = "https://github.com/sojs-coder" target = "_blank">Github</a>|<a href = "https://discord.gg/pNKgERQ9vn" target = "_blank">Discord</a>
+        </div>
+        <div class = "bottom">
+          <div class="arrow bounce">
+            <a href="#f_projects" id = "arrow_bounce">▼</a>
+          </div>
+        </div>
+      </section>
+      <section class = "body big center viewport_height" id = "f_projects">
+        <div class = "heading">
+          <h1 class = "display">Featured Projects</h1>
+          <a href = "/projects"><button>All Projects →</button></a>
+          
+            <div class = "projects">
+        {{ macros.card("MultiSnake","A giant multiplayer snake game. MultiSnake also has a lot of fun mods to play with. [CURRENTLY OFFLINE FOR MAINTENENCE","./images/fog_of_war.png","https://multi-snake.sojs.repl.co") }}
+        {{ macros.card("Help!","Help! 
+   was created to help you with your coding projects. Simply sign up, fill out a form, and wait for advanced coders to join your project.","./images/help.png","https://help.sojs.dev") }}
+          {{ macros.card("Flying Whale!","Created for the 2021 October game jam, you control a whale using the space bar, avoiding asteroids and eating planets.","./images/flying-whale.png","https://replit.com/@sojs/flying-whale?v=1") }}
+          {{ macros.card("Space Wars!","A fun twist on an atari classic, with nearly impossible controls. A true example of \"easy to learn and hard to master\"","./images/space_wars.png","https://replit.com/@sojs/Space-Wars?v=1") }}
+          {{ macros.card("Top Down Shooter!","A top down shooter made while studying game dev theory. You can shoot you machine guns (this slows you down), throw bombs (this stops you), and collect health boosts.","./images/tds.png","https://replit.com/@sojs/The-so-fun-game-of-killing-things-that-try-to-kill-you?v=1") }}
+          {{ macros.card("Gems","A website built to provide the user with other people's projects. If the project gets too much negative attention, it gets removed from the site, filtering it so only the best are left.","./images/gems.png","https://gems.sojs.repl.co/") }}
+          
+        </div>
+        </div>
+      {{ macros.footer() }}
+      </section>
+      {{ macros.scripts("Your experience with this site will be greatly improved by enabling JavaScript") }}
+    </main>
+    
+  </body>
+</html>

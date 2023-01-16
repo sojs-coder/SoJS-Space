@@ -1,0 +1,27 @@
+
+.icon{
+  color: #222;
+}
+header{
+  background-color: #ffffffaa;
+}
+.active{
+  color: #1482f0 !important;
+}
+.shadow{
+  box-shadow: 0px 0px 10px black !important; 
+
+}
+.item-row{
+  text-color: #222;
+}
+a.item{
+  color: #222;
+}
+a.item:hover{
+  color: black;
+}
+
+a.item:active{
+  color:#bf73c9;
+}

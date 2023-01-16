@@ -1,0 +1,57 @@
+body{
+  background: #fff;
+  color: black;
+}
+a{
+  color: #666;
+}
+a:hover{
+  color: #000;
+}
+
+.social a{
+  color: #1482f0;
+}
+.big{
+  color: #222;
+}
+hr{
+  color: #000000aa;
+}
+button{
+  border: 1px solid black;  
+  background-color: white;
+  color: black;
+  transition: 500ms;
+}
+button:hover{
+  color: white;
+  background-color: black;
+}
+.active{
+  color: #1482f0;;
+}
+.textbox{
+  background-color: #ffffff00;
+  color: black;
+  border: 1px solid #000000aa;
+}
+input{
+  color: black;
+}
+input[type="submit"], select{
+  color: #1482f0;;
+  border: 1px solid #1482f0;
+  background-color: #ffffff00;
+}
+.blog_nav{
+  background: white !important;
+}
+h2,h3{
+  color: black;
+}
+footer{
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
+  background: #ffffffaa;
+}

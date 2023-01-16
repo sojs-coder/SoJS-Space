@@ -1,0 +1,50 @@
+{% import "./macros/macros.html" as macros %}
+<!DOCTYPE html>
+<html>
+  <head>
+    
+    {{ macros.head("Search | SOJS","light") }}
+    
+    <link href = "/css/blog_stream.css" rel = "stylesheet">
+  </head>
+  <body>
+    
+    {% include "./partials/nav.html" %}
+    <main class = "body">
+      <section class= "body stream-big big slowtext">
+        <div class="heading">
+          <h1 class="display">Search Stream</h1>
+          <p class = "byline">{{ numr }} {% if (numr > 1 ) %} results {% else %} result {% endif %}({{ optime }} seconds)</p>
+          <form action = "/search" method = "get">
+            <input name = "q"  value = "{{ params.q }}"> In: 
+            <select name = "in">
+              <option value = "s" {% if (params.in == "s") %}selected{% endif %}>Stream</option>
+              <option value = "b" {% if (params.in == "b") %}selected{% endif %}>Blog</option>
+              <option value = "t" {% if (params.in == "t") %}selected{% endif %}>Tutorials</option>
+              <option value = "d" {% if (params.in == "d") %}selected{% endif %}>Dev Logs</option>
+            </select>
+            <input type = "submit" value = "Go">
+          </form>
+         
+          <div class  ="blog_stream">
+            {% if (posts.length <= 0) %}
+              <h1>No results for "{{ params.q }}" in  {% if (params.in == "s") %}stream{% endif %}{% if (params.in == "b") %}blog{% endif %}{% if (params.in == "t") %}tutorials{% endif %}{% if (params.in == "d") %}dev logs{% endif %}</h1>
+              {% endif %}
+            {% for post in posts %}
+          
+              <div class = "blog_card">
+                <h1><a target = "_top"href = "/post/{{ post.posts }}">{{ post.title }} <span class = "blog_tag green">Relevance Score: {{ post.percent }}%</span></a></h1>
+                <p><i><span data-timestamp = "{{ post.timestamp }}" class = "timestamp"></span></i>
+                <p>{{ post.des }}</p>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+    </main>
+  <script src = "/js/timestamp-to-date.js"></script>
+    <script src = "/js/blog_top.js">
+    </script>
+    {{ macros.scripts("Your experience with this site will be greatly improved by enabling JavaScript") }}
+  </body>
+</html>

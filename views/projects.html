@@ -1,0 +1,64 @@
+{% import "./macros/macros.html" as macros %}
+<!DOCTYPE html>
+<html>
+  <head>
+  
+    {{ macros.head("Projects | SOJS","dark") }}
+  </head>
+  <body>
+    {% include "./partials/nav.html" %}
+    <main>
+      <section class = "body stream-big big center viewport_height slowtext">
+        <h1 class = "display">All Projects</h1>
+        <p class = "byline">Check out some of the stuff I've made.</p>
+        <div class = "projects">
+          <hr>
+              <h2>Games</h2>
+        {{ macros.card("MultiSnake","A giant multiplayer snake game. MultiSnake also has a lot of fun mods to play with. [CURRENTLY OFFLINE FOR MAINTENENCE","./images/fog_of_war.png","https://multi-snake.sojs.repl.co") }}
+       
+          {{ macros.card("Flying Whale!","Created for the 2021 October game jam, you control a whale using the space bar, avoiding asteroids and eating planets.","./images/flying-whale.png","https://replit.com/@sojs/flying-whale?v=1") }}
+          {{ macros.card("Space Wars!","A fun twist on an atari classic, with nearly impossible controls. A true example of \"easy to learn and hard to master\"","./images/space_wars.png","https://replit.com/@sojs/Space-Wars?v=1") }}
+          {{ macros.card("Top Down Shooter!","A top down shooter made while studying game dev theory. You can shoot you machine guns (this slows you down), throw bombs (this stops you), and collect health boosts.","./images/tds.png","https://replit.com/@sojs/The-so-fun-game-of-killing-things-that-try-to-kill-you?v=1") }}  
+          {{ macros.card("Simon","A Simon game demonstrating the creative use of HTML tables and gradient colors to look like lights.","./images/simon_full.png","https://replit.com/@sojs/Simon?v=1") }}
+          <h3>Terminal Games</h3>
+          {{ macros.card("I.Q Builder","A fun little time waster project that I built a back in 2019.","./images/iqbuilder.png","https://replit.com/@sojs/IQ-Builder?v=1") }}
+          {{ macros.card("Worlds Simplest Pac Man","The most barebones pac man game ever greated","./images/simplepacman.png","https://replit.com/@sojs/Worlds-Simplest-pac-man?v=1") }}
+          {{ macros.card("RPG","A small game that I worked on with a friend, fun to explore the dungeon.","./images/rpg.png","https://replit.com/@sojs/RPG?v=1") }}
+        </div>
+       <div class = "projects">
+         <hr>
+          <h2>Server Based</h2>
+           {{ macros.card("Help!","Help! 
+   was created to help you with your coding projects. Simply sign up, fill out a form, and wait for advanced coders to join your project.","./images/help.png","https://help.sojs.dev") }}
+         {{ macros.card("Commerce","A chat server I made a couple years back. I recommend, for the safety of your eyes, to not open on mobile.","./images/chat-room.png","https://replit.com/@sojs/Commerce?v=1") }}
+          {{ macros.card("Gems","A website built to provide the user with other people's projects. If the project gets too much negative attention, it gets removed from the site, filtering it so only the best are left.","./images/gems.png","https://gems.sojs.repl.co/") }}
+        </div>
+        <div class = "projects">
+          <hr>
+          <h2>Static Websites</h2>
+           {{ macros.card("Screen Recorder","A fun implementation of a screen capture API I found.","./images/screen_recorder.png","https://screen-recorder.sojs.repl.co/") }}
+          {{ macros.card("Code Runner","What I hope was the orignal inspirational for the replit comment system... but you never know","./images/code_runner.png","https://code-runner.sojs.repl.co/") }}
+          {{ macros.card("Bouncy Balls","A rather cool implementation of the HTML marquee element to create 
+ a cool visual effect.","./images/bouncy_balls.png","https://boucny-balls.sojs.repl.co/") }}
+        </div>
+        <div class = "projects">
+          <hr>
+          <h2>APIs and Templates</h2>
+          {{ macros.card("Terminal Canvas","This is spent probably way too long working on, considering I'll never use it. One day I might add physics and camera movement.","./images/terminal-canvas.png","https://replit.com/@sojs/Terminal-Canvas?v=1") }}
+          {{ macros.card("RPG Template","A template for my RPG game so that other people can create their own dungeons. Not a lot of documentation","./images/rpg-template.png","https://replit.com/@sojs/RPG-template?v=1") }}
+          {{ macros.card("SoDB","A simple filesystem database with support for encryption.","./images/so_db.png","https://www.npmjs.com/package/@sojs_coder/sodb") }}
+        </div>
+        
+        <div class = "projects">
+          <hr>
+          <h2>Works In Progress</h2>
+          {{ macros.card("DrawMania","A long forgotten project- all drawing features still work, but I never created a login and signup page.","./images/drawmania.png","https://draw-mania.sojs.repl.co/") }}
+          {{ macros.card("Ganymede","I kept adding more and more things to this one, making it more and more buggy. Now monsters spawn in rooms they should'nt, the fighting system is messed up, and a bunch of other things are flawed. Still fun to mess around in, though","./images/ganymede.png","https://ganymede.sojs.repl.co/") }}
+          {{ macros.card("Fire","This idea sounded way better in my brain then on paper.","./images/fire.png","https://fire.sojs.repl.co/") }}
+          {{ macros.card("That Other Game","This game was more of a concept project, and I never got around to finishing it. I did not want to learn the canvas API, so insead I just used HTML table. I also never gave it a proper name.","./images/that-other-game.png","https://That-other-game-that-I-will-actually-make.sojs.repl.co") }}
+        </div>
+      </section>
+    </main>
+  </body>
+  {{ macros.scripts("Your experience with this site will be greatly improved by enabling JavaScript") }}
+</html>

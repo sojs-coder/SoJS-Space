@@ -1,0 +1,29 @@
+body{
+  background-color: white !important;
+  color: black !important;
+}
+button{
+  color: black !important;
+}
+input{
+  
+}
+.top_container{
+  display: flex;
+  flex-direction: row;
+}
+.editor_container{
+  padding: 0 10% 0 10%;
+  display: flex;
+  flex-direction: column;
+  text-align: left !important;
+}
+.editor_container button.save{
+  background-color: white;
+  border: 1px solid black;
+  margin: 5%;
+  transition: 500ms;
+}
+.editor_container button:hover{
+  background-color: #ccc;
+}

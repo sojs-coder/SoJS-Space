@@ -1,0 +1,23 @@
+{% import "./macros/macros.html" as macros %}
+<!DOCTYPE html>
+<html>
+  <head>
+    {{ macros.head("Login | SOJS","dark") }}
+  </head>
+  <body>
+    {% include "./partials/nav.html" %}
+    <main class = "body">
+      <section class= "body big slowtext">
+        <div class="heading">
+          <h1 class="display">SOJS</h1>
+          <p class = "byline">Type In Your Key</p>
+          <form action = "/login" method = "post">
+            <input placeholder = "Who are you?" type="text" name = "user" >
+            <input placeholder="key" type="password" name = "key" ><input type = "submit" value = "submit">
+          </form>
+        </div>
+      </section>
+    </main>
+    {{ macros.scripts("Your experience with this site will be greatly improved by enabling JavaScript") }}
+  </body>
+</html>

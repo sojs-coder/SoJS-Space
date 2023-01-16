@@ -1,0 +1,71 @@
+:root{
+  --background-color: #000;
+}
+body{
+  background: #000;
+}
+a{
+  color: #ccc;
+}
+a:hover{
+  color: white;
+}
+.blog_card{
+  box-shadow: 0px 0px 2px #ffffffaa !important; 
+}
+.blog_card p{
+  color: white;
+}
+.social a{
+  color: dodgerblue;
+}
+.big{
+  color: #ccc;
+}
+hr{
+  color: #ffffffaa;
+}
+button{
+  border: 1px solid white;
+  background-color: black;
+  color: white;
+  transition: 500ms;
+}
+button:hover{
+  color: black;
+  background-color: white;
+}
+.active{
+  color: dodgerblue;
+}
+.textbox{
+  background-color: #00000000;
+  color: white;
+  border: 1px solid #ffffffaa;
+}
+input{
+  color: white;
+}
+input[type="submit"], select{
+  color: dodgerblue;
+  border: 1px solid dodgerblue;
+  background-color: #00000000;
+}
+
+h2,h3{
+  color: white;
+}
+.blog_nav{
+  background: black !important;
+}
+.blog_nav .navitem.active{
+  color: #fff !important;
+}
+.blog_nav .navitem{
+  border-bottom: 4px solid white;
+}
+footer{
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
+  background-color: #000000aa;
+}

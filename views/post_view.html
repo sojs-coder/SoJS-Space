@@ -1,0 +1,46 @@
+{% import "./macros/macros.html" as macros %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href = "/css/blog_post.css" rel = "stylesheet">
+    {{ macros.head("SOJS","light") }}
+  </head>
+  <body>
+    {% include "./partials/nav.html" %}
+    <main class = "body">
+      <section class = "big align-left">
+        <div class = "blog-title">
+          <h1 class="display no-margin">{{ post.title }}</h1>
+          {% if loggedIn %}
+            <a href = "/update/{{ post.posts }}">Update this post, {{ loggedIn }}</a>
+          {% endif %}
+          <p class = "byline">{{ post.author }} - <span data-timestamp = "{{ post.timestamp }}" class = "timestamp"></span></p>
+          <p class = "byline">{{ post.des }}</p>
+        </div>
+        <br>
+
+
+        <div class = "content">
+          {{ post.content | safe }}
+        </div>
+        <div class = "email_sign align-left">
+          <form action = "/email-sign" method = "POST" style = "padding-left: 15px; border-left: 6px solid #000000a0;">
+            <h2>Signup for Updates</h2>
+            <p>Emails are sent out monthly, no spam, ever.</p>
+            <input name = "email" placeholder = "jane.doe@example.com"><input type = "submit" value = "Submit">
+            <div style = "margin: 4px;">
+            <a href = "/contact">Write For Us</a>
+          </a>
+          </form>
+          
+        </div>
+        <div>
+         
+        </div>
+      </section>
+    </main>
+    <script src = "https://SoAuth.sojs.repl.co/js/soauth.js"></script>
+    <script src = "/js/timestamp-to-date.js"></script>
+    {{ macros.scripts("Your experience with this site will be greatly improved by enabling JavaScript") }}
+  </body>
+</html>

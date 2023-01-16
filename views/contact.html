@@ -1,0 +1,23 @@
+{% import "./macros/macros.html" as macros %}
+<!DOCTYPE html>
+<html>
+  <head>
+  
+    {{ macros.head("Contact | SOJS","dark") }}
+  </head>
+  <body>
+    {% include "./partials/nav.html" %}
+    <main class = "body">
+      <section class= "body big slowtext">
+        <div class="heading">
+          <h1 class="display">SOJS</h1>
+          <p class = "byline">Contact Me</p>
+          <p class = "social"><a href = "mailto:sojscoder@gmail.com" target = "_blank">Mail Me</a>|<a href = "https://discord.gg/pNKgERQ9vn" target = "_blank">Join My Discord</a>
+        </div>
+      </section>
+      {{ macros.footer() }}
+    </main>
+    {{ macros.scripts("Your experience with this site will be greatly improved by enabling JavaScript") }}
+  </body>
+</html>
+  

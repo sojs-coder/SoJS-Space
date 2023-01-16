@@ -1,0 +1,23 @@
+{% import "./macros/macros.html" as macros %}
+<!DOCTYPE html>
+<html>
+  <head>
+  
+    {{ macros.head("Thank You!","dark") }}
+  </head>
+  <body>
+    {% include "./partials/nav.html" %}
+<!--     <video src = "/images/promo.mp4" autoplay muted></video> -->
+    <main class = "body"> 
+      <section class= "body big slowtext">
+        <div class="heading">
+          <h1 class="display">Thank You!</h1>
+          <p class = "byline">Thank you for signing up to recieve email updates. If this was a mistake, <a href = "/unsub">unsubscribe now</a></p>
+        </div>
+      {{ macros.footer() }}
+      </section>
+      {{ macros.scripts("Your experience with this site will be greatly improved by enabling JavaScript") }}
+    </main>
+    
+  </body>
+</html>
