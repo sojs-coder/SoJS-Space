@@ -25,13 +25,13 @@ a:hover{
 hr{
   color: #ffffffaa;
 }
-button{
+.button{
   border: 1px solid white;
   background-color: black;
   color: white;
-  transition: 500ms;
+  transition: 250ms;
 }
-button:hover{
+.button:hover{
   color: black;
   background-color: white;
 }
@@ -44,12 +44,17 @@ button:hover{
   border: 1px solid #ffffffaa;
 }
 input{
+  border: 1px solid white;
+  background-color: black;
   color: white;
 }
-input[type="submit"], select{
-  color: dodgerblue;
-  border: 1px solid dodgerblue;
-  background-color: #00000000;
+select{
+  display: inline-block;
+  padding: 2px 0 2px 0;
+  color: white;
+}
+option{
+  background-color: black;
 }
 
 h2,h3{

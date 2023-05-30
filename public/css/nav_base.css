@@ -1,18 +1,22 @@
 .nav .icons {
     display: none;
+
 }
 #topNav{
   transition: 1s;
+  
 }
 header{
   -webkit-backdrop-filter: blur(7px);
   backdrop-filter: blur(7px);
   position: fixed;
+  z-index: +1;
   width: 100%;
   top: 0;
   left: 0;
   margin: 0;
-  padding: 10px 0 10px 0;
+  padding: 12px 0 12px 0;
+  transition: 1s;
 }
 .shadow{
   transition: 1s;

@@ -69,15 +69,16 @@
 <script>window.SOJS = {}</script>
 {% endmacro %}
 {% macro card(title,des,imgLink,link) %}
+<a href = "{{ link }}" target = "_blank" style = "text-decoration: none;">
 <div class = " card card-img" style = "background: url('{{ imgLink }}');background-size:cover;background-opacity: 0.4">
    <div class="card-fader">
-    <h3><a href = "{{ link }}" target = "_blank">{{ title }}</a></h3>
+    <h3>{{ title }}</h3>
     <div class = "card-des">
       <p>{{ des }}</p>
     </div>
   </div>
 </div>
-
+</a>
 {% endmacro %}
 {% macro footer() %}
 <footer>

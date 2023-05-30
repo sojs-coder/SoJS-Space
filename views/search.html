@@ -3,7 +3,7 @@
 <html>
   <head>
     
-    {{ macros.head("Search | SOJS","light") }}
+    {{ macros.head("Search | SOJS","dark") }}
     
     <link href = "/css/blog_stream.css" rel = "stylesheet">
   </head>
@@ -31,9 +31,9 @@
               <h1>No results for "{{ params.q }}" in  {% if (params.in == "s") %}stream{% endif %}{% if (params.in == "b") %}blog{% endif %}{% if (params.in == "t") %}tutorials{% endif %}{% if (params.in == "d") %}dev logs{% endif %}</h1>
               {% endif %}
             {% for post in posts %}
-          
               <div class = "blog_card">
-                <h1><a target = "_top"href = "/post/{{ post.posts }}">{{ post.title }} <span class = "blog_tag green">Relevance Score: {{ post.percent }}%</span></a></h1>
+                <h1>          <a target = "_top" href = "/post/{{ post.posts }}">
+{{ post.title }} <span class = "blog_tag green">Relevance Score: {{ post.score }}%</span></a></h1>
                 <p><i><span data-timestamp = "{{ post.timestamp }}" class = "timestamp"></span></i>
                 <p>{{ post.des }}</p>
               </div>

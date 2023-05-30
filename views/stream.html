@@ -22,8 +22,10 @@
   <body>
     <div class  ="blog_stream">
       {% for post in posts %}
+      
           <div class = "blog_card">
-            <h1><a target = "_top"href = "/post/{{ post.posts }}">{{ post.title }} </a></h1>
+            
+            <h1><a target = "_top" href = "/post/{{ post.posts }}">{{ post.title }}</a></h1>
             <p><i><span data-timestamp = "{{ post.timestamp }}" class = "timestamp"></span></i>
             <p>{{ post.des }}</p>
           </div>

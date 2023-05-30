@@ -21,7 +21,3 @@ a.item{
 a.item:hover{
   color: black;
 }
-
-a.item:active{
-  color:#bf73c9;
-}

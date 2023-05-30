@@ -11,6 +11,7 @@
 }
 .toggle-container{
   position:relative;
+  z-index: 2;
 }
 .toggle-slot {
   transform: scale(0.8);
@@ -24,6 +25,7 @@
   border-radius: 2em;
   background-color: white;
   transition: background-color 250ms;
+  cursor: pointer;
 }
 
 .toggle-checkbox:checked ~ .toggle-slot {

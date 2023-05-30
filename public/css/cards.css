@@ -2,7 +2,7 @@
   border-radius: 2px;
   backgrond-color: black;
   max-width: 400px;
-  height: 350px;
+  height: 200px;
   overflow: hidden;
   transition: transform 250ms;
   margin: 10px;
@@ -15,7 +15,6 @@
   
 }
 .card.card-img{
-  height: 100%;
   width: 100%;
 }
 .card h3{

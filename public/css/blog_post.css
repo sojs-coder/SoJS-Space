@@ -5,6 +5,41 @@
   width: 45%;
   
 }
+p, ul, li, code{
+  word-break: break-word;
+  line-height: 150%;
+  font-size: 18px;
+}
+pre code, code{
+  white-space: pre;
+  font-family: 'Cutive Mono', monospace;
+  font-weight: 300;
+  font-size: 14px;
+}
+.copy-button {
+   position: relative;
+   top: 0;
+  cursor: pointer;
+}
+.hljs-copy-button{
+  background-color: #00000088 !important;
+  cursor: pointer;
+  margin-top: -10px;
+  margin-right: -10px;
+  transition: 250ms;
+}
+.hljs-copy-button:hover{
+  background-color: #0000009a !important;
+}
+.hljs-copy-button:focus{
+  outline-offset: 3px;
+  outline: 3px solid black;
+}
+pre{
+  display: block !important;
+  border-radius: 8px !important;
+  position: relative;
+}
 .body .content p{
   font-size: 19px !important;
   line-height: 1.7em;

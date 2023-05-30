@@ -12,187 +12,111 @@ const fs = require("fs");
 const useragent = require('express-useragent');
 const bodyParser = require ('body-parser');
 const SoDB = require("@sojs_coder/sodb");
+const https = require("https");
+const PORT = process.env.PORT || 3000;
+
 
 function titleToPosts(title){
   return title.split(" ").join("_").replace(/\W+/g,"")
 }
-function json2array(json){
-  var result = [];
-  var keys = Object.keys(json);
-  keys.forEach(function(key){
-    json[key].key = key
-    result.push(json[key]);
-  });
-  return result;
-}
-class Sort{
-  constructor(data){
-    if(!Array.isArray(data)){
-      data = json2array(data);
-    }
-    this.data = data;
-  }
-  sortByNewest(){
-    
-    this.data = this.data.sort((a,b)=>{
-      if (a.timestamp > b.timestamp) {
-        return -1;
-      }
-      if (a.timestamp < b.timestamp) {
-        return 1;
-      }
-      return 0;
-    });
-    return this.data
-    
-  }
-  sortByScore(){
-    this.data = this.data.sort((a,b)=>{
-      if (a.score > b.score) {
-        return -1;
-      }
-      if (a.score < b.score) {
-        return 1;
-      }else{
-        if (a.timestamp > b.timestamp) {
-        return -1;
-      }
-      if (a.timestamp < b.timestamp) {
-        return 1;
-      }
-      }
-    });
-    var newData = [];
-    this.data.forEach((d)=>{
-      if (d.score > 0){
-        d.percent = ((d.score / this.totalScore) * 100).toFixed(1);
-        newData.push(d)
-      }
-    })
-    return newData;
-  }
-  search(keyword){
-    var totalScore=0
-    keyword = keyword.toLowerCase();
-    var keywords = keyword.split(' ');
-    this.data = this.data.map(item=>{
-      var itemKeys = Object.keys(item);
-      var itemScore = 0;
-      itemKeys.forEach(key=>{
-        var dataString = item[key].toString();
-        dataString = dataString.toLowerCase();
-        keywords.forEach(keyword=>{
-          dataString.split(" ").forEach(testString=>{
-            if(testString.indexOf(keyword) !== -1){
-              itemScore++;
-              totalScore++;
-            }
-          })
-        })
-      });
-      item["score"] = itemScore;
-      return item;
-    });
-    this.totalScore = totalScore;
-    //this.data = this.sortByNewest();
-    this.data = this.sortByScore();
 
-    return this.data
+
+
+const so_db = new SoDB.Database("SoSearch",{encrypt:true,logs:true})
+const cache = new SoDB.Database("SoSearch_cache",{encrypt:true,logs:true});
+const cache_ttl = new SoDB.Database("cache_ttl",{encrypt:true,logs:true})
+const unpub = new SoDB.Database("unpub",{encrypt:true,logs:true});
+
+
+
+class Search {
+  constructor(cacheResults = true, encrypt = false, logs = false) {
+    this.cache = cacheResults;
+    this.encrypt = encrypt;
+    this.logs = logs;
   }
-  filterIn(under){
+
+  async middleSearch(query) {
+    const dump = await so_db.dump();
+    const sort = new Sort(dump);
+    return sort.search(query);
+  }
+
+  async search(query) {
+    if (this.cache) {
+      var cachedData = false;
+      try{ cachedData = await cache.getDoc(query);}catch(err){cachedData = false; console.log(err)}
+      if (cachedData && (Date.now() - cachedData.timestamp) / 36e5 <= 1) {
+        return cachedData.results;
+      } else {
+        const results = await this.middleSearch(query);
+        cache.addDoc(query, { results, timestamp: Date.now() });
+        return results;
+      }
+    } else {
+      return this.middleSearch(query);
+    }
+  }
+}
+
+const json2array = json => Object.keys(json).map(key => ({ ...json[key], key }));
+
+
+class Sort {
+  constructor(data) {
+    this.data = Array.isArray(data) ? data : json2array(data);
+  }
+
+  filterIn(under) {
     this.data = this.data.filter(item=>{
       return (item.under == under);
     });
     return this.data;
   }
-}
 
-
-
-const so_db = new SoDB.Database("SoSearch",true)
-const cache = new SoDB.Database("SoSearch_cache",true);
-const cache_ttl = new SoDB.Database("cache_ttl",true)
-const unpub = new SoDB.Database("unpub",true);
-
-
-
-
-
-/*
-CryptoJS.AES.encrypt(data,process.env.SO_SEARCH_KEY);
-CryptoJS.AES.decrypt(data,process.env.SO_SEARCH_KEY);
-*/
-class Search{
-  constructor(cacheResults = true,encrypt = false,logs = false){
-    this.cache = cacheResults;
-    this.encrypt = encrypt;
-    this.logs = logs;
+  filterOut() {
+    this.data = this.data.filter(d => d.score > 0);
+    return this.data;
   }
-  middleSearch(query){
-    return new Promise((r,rr)=>{
-      so_db.dump().then((dump)=>{
-        var sort = new Sort(dump);
-        let results = sort.search(query);
-        r(results);
+
+  sortByNewest() {
+    return this.data.sort((a, b) => b.timestamp - a.timestamp);
+  }
+
+  sortByScore() {
+    const filteredData = this.filterOut();
+    const totalScore = filteredData.reduce((acc, cur) => acc + cur.score, 0);
+    return filteredData
+      .sort((a, b) => (b.score !== a.score ? b.score - a.score : b.timestamp - a.timestamp))
+      .map(d => ({
+        ...d,
+        percent: ((d.score / totalScore) * 100).toFixed(1)
+      }));
+  }
+
+  search(keyword) {
+    keyword = keyword.toLowerCase();
+    const keywords = keyword.split(' ');
+    const filteredData = this.data
+      .map(item => {
+        let score = 0;
+        const itemKeys = Object.keys(item);
+        keywords.forEach(word => {
+          itemKeys.forEach(key => {
+            if (item[key].toString().toLowerCase().includes(word)) {
+              score++;
+            }
+          });
+        });
+        return { ...item, score };
       })
-    })
-  }
-  search(query){
-    return new Promise((r,rr)=>{
-      if(this.cache){
-        cache.getDoc(query.split(" ").join("_")).then((data)=>{
-          if(data && (new Date().getTime() - data.timestamp)/60000/60 <= 1){
-            var results = data.results.map(elem=>{
-                return {
-                  posts: elem.key,
-                  title: elem.title,
-                  percent: elem.percent,
-                  des: elem.des,
-                  author: elem.author,
-                  timestamp: elem.timestamp
-                }
-              })
-            r(data.results);
-          }else{
-            this.middleSearch(query).then((results)=>{
-              results = results.map(elem=>{
-                return {
-                  posts: elem.key,
-                  title: elem.title,
-                  percent: elem.percent,
-                  des: elem.des,
-                  author: elem.author,
-                  timestamp: elem.timestamp
-                }
-              })
-              var map = {
-                results,
-                timestamp: new Date().getTime()
-              }
-              cache.addDoc(query.split(" ").join("_"),map);
-              
-              r(results)
-            })
-          }
-        })
-      }else{
-        this.middleSearch(query).then((results)=>{
-          var results = results.map(elem=>{
-                return {
-                  posts: elem.key,
-                  title: elem.title,
-                  percent: elem.percent,
-                  authro: elem.author,
-                  des: elem.des,
-                  timestamp: elem.timestamp
-                }
-              })
-          r(results);
-        })
-      }
-    })
+      .filter(item => item.score > 0);
+    return filteredData;
   }
 }
+
+
+
 
 const enc = (data)=>{
   return CryptoJS.AES.encrypt(data,process.env.SO_DB_KEY).toString();
@@ -210,12 +134,10 @@ const DynamoDB = new AWS.DynamoDB();
 const dynamoClient = new AWS.DynamoDB.DocumentClient();
 const TABLE_NAME = "SoJS_posts";
 const T2 = "people";
-async function resetDB(){
+function resetDB(){
   getEveryPost(TABLE_NAME).then(data=>{
     var items = data.Items;
-    so_db.__initCrypto();
-    cache.__initCrypto();
-    unpub.__initCrypto();
+    cache_ttl.addDoc("t",{"timestamp":new Date().timestamp});
     items = json2array(items);
     items.forEach((item)=>{
       so_db.addDoc(titleToPosts(item.title),{
@@ -224,17 +146,17 @@ async function resetDB(){
         timestamp: item.timestamp,
         des: item.des,
         content: item.content
-      });
+      }).then(i=>{console.log(titleToPosts(i.title))})
       if(!item.published){
         unpub.addDoc(titleToPosts(item.title),{
           title: item.title,
           des: item.des,
           under: item.under,
           posts: titleToPosts(item.title)
-        });
+        }).then(i=>{console.log("UnPub "+i.title)});
       }
     })
-  })
+  });
 }
 
 async function getAllSubs(){
@@ -249,6 +171,27 @@ async function getAllSubs(){
     console.log(err);
   }
 }
+const getTenItems = (tableName, lastEvaluatedKey) => {
+  return new Promise((resolve, reject) => {
+    const params = {
+      TableName: tableName,
+      Limit: 10,
+      ExclusiveStartKey: lastEvaluatedKey,
+      ScanIndexForward: false
+    };
+
+    dynamoClient.scan(params, (error, data) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve({
+          items: data.Items,
+          lastEvaluatedKey: data.LastEvaluatedKey,
+        });
+      }
+    });
+  });
+};
 async function emailSub(email){
   const params = {
     TableName: T2,
@@ -426,9 +369,11 @@ app.use(express.static('public'));
 
 app.get('/', (req, res) => {
   res.render('index.html');
-  if((cache_ttl.getDoc("t") - new Date().getTime()/1000/60/60/24/30) >=1){
-  resetDB()
-  }
+  cache_ttl.getDoc("t").then(d=>{
+    if((d.timestamp - new Date().getTime()/1000/60/60/24/10) >= 1){
+      resetDB()
+    }
+  })
 });
 app.get('/projects', (req, res) => {
   res.render('projects.html');
@@ -467,17 +412,6 @@ app.get('/update/:id',(req,res)=>{
   }
 })
 app.get('/login',(req,res)=>{
-	console.log(req.cookies)
-	console.log(req.session);
-  if(req.cookies["so-auth-user"] && req.cookies["so-auth-user"] != "undefined"){
-    req.session.user = {
-      username: req.cookies["so-auth-user"],
-      email: req.cookies["so-auth-email"],
-      name: req.cookies["so-auth-name"],
-      pfp: req.cookies["so-auth-pfp"],
-      verified: req.cookies["so-auth-verified"]
-    }
-  }
   if(req.session.user && req.session.user.email && process.env.VALID_NAMES.split(",").indexOf(req.session.user.username) !== -1){
     res.redirect('/dashboard')
   }else{
@@ -492,11 +426,19 @@ app.get('/post',(req,res)=>{
     res.redirect('/login');
   }
 });
-app.get('/post/:id',(req,res)=>{
+app.get('/post/:id',(req,res,next)=>{
   var posts = req.params["id"];
   getPostById(TABLE_NAME,{ posts: posts }).then(post => {
     post = post.Item;
-    res.render('post_view.html',{ post: post,loggedIn: (req.session.user) ? req.session.user.name : false });
+    if( post && post.title){
+      console.log(req.session.user);
+      res.render('post_view.html',{ 
+        post: post,
+        loggedIn: req.session.user
+      });
+    }else{
+      next();
+    }
   })
   
 });
@@ -504,9 +446,9 @@ app.get('/search',(req,res)=>{
   var time1 = performance.now()
   new Search(true).search(req.query["q"]).then(data =>{
     var sort = new Sort(data);
-    if(req.query["in"] !== "s"){
-      data = sort.filterIn(req.query["in"])
-    }
+//    if(req.query["in"] !== "s"){
+//      data = sort.filterIn(req.query["in"])
+//    }
     // add score percenr solver here
     res.render('search.html',{posts: data,params: {q: req.query.q,in:req.query.in}, optime: ((performance.now() - time1)/1000).toFixed(4), numr: data.length})
   })
@@ -528,7 +470,33 @@ app.get('/dashboard',(req,res)=>{
     res.redirect('/login')
   }
 })
+app.post("/login",(req,res)=>{
+  if(req.body.key == process.env.KEY){
+    req.session.user = {
+      email: true,
+      username: "SoJS"
+    };
+    res.redirect("/dashboard")
+  }else{
+    res.redirect("/login")
+  }
+})
 
+app.post("/items", (req, res) => {
+  const lastEvaluatedKey = req.body.lastEvaluatedKey;
+  getTenItems(TABLE_NAME, lastEvaluatedKey)
+    .then((data) => {
+      res.json({
+        items: data.items,
+        lastEvaluatedKey: data.lastEvaluatedKey,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        error: error.message,
+      });
+    });
+});
 app.post('/post',(req,res)=>{
   if(req.session.user && req.session.user.username != "undefined"){
     if(req.body.published){
@@ -601,9 +569,6 @@ app.post("/unsub",(req,res)=>{
   res.redirect('/blog');
 })
 
-app.listen(3000, () => {
-  console.log('server started');
-});
-
-resetDB()
-
+app.listen(PORT,()=>{
+  console.log("Server open on port "+PORT)
+})

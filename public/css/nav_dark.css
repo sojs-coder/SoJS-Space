@@ -24,6 +24,3 @@ a.item{
 a.item:hover{
   color: white;
 }
-a.item:active{
-  color:#ecb8ff;
-}

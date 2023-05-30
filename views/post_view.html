@@ -3,7 +3,16 @@
 <html>
   <head>
     <link href = "/css/blog_post.css" rel = "stylesheet">
-    {{ macros.head("SOJS","light") }}
+    {{ macros.head("SOJS","dark") }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js" integrity="sha512-bgHRAiTjGrzHzLyKOnpFvaEpGzJet3z4tZnXGjpsCcqOnAH6VGUx9frc5bcIhKTVLEiCO6vEhNAgx5jtLUYrfA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css"
+/>
+    <script>
+      hljs.addPlugin(new CopyButtonPlugin());
+      hljs.highlightAll();
+    </script>
   </head>
   <body>
     {% include "./partials/nav.html" %}
@@ -11,8 +20,8 @@
       <section class = "big align-left">
         <div class = "blog-title">
           <h1 class="display no-margin">{{ post.title }}</h1>
-          {% if loggedIn %}
-            <a href = "/update/{{ post.posts }}">Update this post, {{ loggedIn }}</a>
+          {% if(loggedIn) %}
+            <a href = "/update/{{ post.posts }}">Update this post, {{ loggedIn.username }}</a>
           {% endif %}
           <p class = "byline">{{ post.author }} - <span data-timestamp = "{{ post.timestamp }}" class = "timestamp"></span></p>
           <p class = "byline">{{ post.des }}</p>
@@ -39,7 +48,6 @@
         </div>
       </section>
     </main>
-    <script src = "https://SoAuth.sojs.repl.co/js/soauth.js"></script>
     <script src = "/js/timestamp-to-date.js"></script>
     {{ macros.scripts("Your experience with this site will be greatly improved by enabling JavaScript") }}
   </body>
