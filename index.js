@@ -3,16 +3,19 @@ const express = require("express");
 const nunjucks = require("nunjucks");
 const crypto = require("crypto-js")
 const SHA256 = require("crypto-js/sha256");
+const CryptoJS = require("crypto-js")
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const morgan = require('morgan');
 const AWS = require("aws-sdk");
-const fs = require("fs")
+const fs = require("fs");
 const useragent = require('express-useragent');
 const bodyParser = require ('body-parser');
 const SoDB = require("@sojs_coder/sodb");
 
-
+function titleToPosts(title){
+  return title.split(" ").join("_").replace(/\W+/g,"")
+}
 function json2array(json){
   var result = [];
   var keys = Object.keys(json);
@@ -109,7 +112,12 @@ class Sort{
 const so_db = new SoDB.Database("SoSearch",true)
 const cache = new SoDB.Database("SoSearch_cache",true);
 const cache_ttl = new SoDB.Database("cache_ttl",true)
-cache_ttl.addDoc("t",new Date().getTime)
+const unpub = new SoDB.Database("unpub",true);
+
+
+
+
+
 /*
 CryptoJS.AES.encrypt(data,process.env.SO_SEARCH_KEY);
 CryptoJS.AES.decrypt(data,process.env.SO_SEARCH_KEY);
@@ -202,21 +210,29 @@ const DynamoDB = new AWS.DynamoDB();
 const dynamoClient = new AWS.DynamoDB.DocumentClient();
 const TABLE_NAME = "SoJS_posts";
 const T2 = "people";
-
 async function resetDB(){
   getEveryPost(TABLE_NAME).then(data=>{
     var items = data.Items;
     so_db.__initCrypto();
     cache.__initCrypto();
+    unpub.__initCrypto();
     items = json2array(items);
     items.forEach((item)=>{
-      so_db.addDoc(item.key,{
+      so_db.addDoc(titleToPosts(item.title),{
         title: item.title,
         author: item.author,
         timestamp: item.timestamp,
         des: item.des,
         content: item.content
-      })
+      });
+      if(!item.published){
+        unpub.addDoc(titleToPosts(item.title),{
+          title: item.title,
+          des: item.des,
+          under: item.under,
+          posts: titleToPosts(item.title)
+        });
+      }
     })
   })
 }
@@ -237,7 +253,7 @@ async function emailSub(email){
   const params = {
     TableName: T2,
     Key: {
-      email,
+      email
     },
     UpdateExpression: "set subscribed = :sub",
     ExpressionAttributeValues: {
@@ -277,7 +293,7 @@ const insertPost = async (postId, author,content,des, title,under, published) =>
       under,
       published,
       timestamp
-    },
+    }
   };
   so_db.addDoc(postId,{
     author,
@@ -370,7 +386,7 @@ const setUnpublished = async (postID)=>{
     Key: {
       posts: postID
     },
-    UpdateExpression: "remove published"
+    UpdateExpression: "remove published",
   }
   try {
     const data = await dynamoClient.update(params).promise();
@@ -380,10 +396,13 @@ const setUnpublished = async (postID)=>{
   }
 }
 
+
+
 const app = express();
 
 const KEY = SHA256(process.env.KEY).toString();
-//app.use(morgan('dev'));
+app.use(morgan('dev'));
+app.use(cookieParser());
 app.use(useragent.express());
 app.use(session({
 	secret: process.env.SECRET,
@@ -396,8 +415,6 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json({limit: "1mb"}));
 
-
-
 nunjucks.configure('views', {
     autoescape:  true,
     express:  app
@@ -406,7 +423,6 @@ nunjucks.configure('views', {
 
 app.set('view engine', 'njk');
 app.use(express.static('public'));
-
 
 app.get('/', (req, res) => {
   res.render('index.html');
@@ -438,12 +454,12 @@ app.get('/blog/:s',(req,res)=>{
 
 });
 app.get('/update/:id',(req,res)=>{
-  if(req.session.loggedIn){
+  if(req.session.user && req.session.user.email != "undefined"){
   var posts = req.params["id"];
   getPostById(TABLE_NAME,{ posts: posts }).then(post => {
 
     post = post.Item;
-    res.render('update_post.html',{ post: post,loggedIn: req.session.name });
+    res.render('update_post.html',{ post: post,loggedIn: req.session.user.name });
   })
   }else{
     req.session.goto = "/update/"+req.params.id;
@@ -451,10 +467,25 @@ app.get('/update/:id',(req,res)=>{
   }
 })
 app.get('/login',(req,res)=>{
-  res.render('login.html');
+	console.log(req.cookies)
+	console.log(req.session);
+  if(req.cookies["so-auth-user"] && req.cookies["so-auth-user"] != "undefined"){
+    req.session.user = {
+      username: req.cookies["so-auth-user"],
+      email: req.cookies["so-auth-email"],
+      name: req.cookies["so-auth-name"],
+      pfp: req.cookies["so-auth-pfp"],
+      verified: req.cookies["so-auth-verified"]
+    }
+  }
+  if(req.session.user && req.session.user.email && process.env.VALID_NAMES.split(",").indexOf(req.session.user.username) !== -1){
+    res.redirect('/dashboard')
+  }else{
+    res.render('login.html');
+  }
 });
 app.get('/post',(req,res)=>{
-  if(req.session.loggedIn){
+  if(req.session.user && req.session.user.email != "undefined"){
     res.render('post.html',{author: req.session.name});
   }else{
     req.session.goto = "/post";
@@ -465,7 +496,7 @@ app.get('/post/:id',(req,res)=>{
   var posts = req.params["id"];
   getPostById(TABLE_NAME,{ posts: posts }).then(post => {
     post = post.Item;
-    res.render('post_view.html',{ post: post,loggedIn: req.session.name });
+    res.render('post_view.html',{ post: post,loggedIn: (req.session.user) ? req.session.user.name : false });
   })
   
 });
@@ -486,31 +517,41 @@ app.get('/unsub',(req,res)=>{
 })
 app.get("/thank-you",(req,res)=>{
   res.render('thank-you.html')
+});
+app.get('/dashboard',(req,res)=>{
+  if(req.session.user && req.session.user.email && req.session.user.email != "undefined"){
+    unpub.dump().then((data)=>{
+      res.render('dashboard.html',{isMobile:req.useragent.isMobile,sortedByNewest: new Sort(data).sortByNewest(), user: req.session.user });
+    })
+    
+  }else{
+    res.redirect('/login')
+  }
 })
 
-
-app.post('/login',(req,res)=>{
-  var key = req.body.key;
-  key = SHA256(key).toString();
-  if(key === KEY){
-    req.session.loggedIn = true 
-    req.session.name = req.body.user;
-    res.redirect(req.session.goto || "/blog");
-  }else{
-    res.redirect('/login');
-  }
-});
-
 app.post('/post',(req,res)=>{
-  if(req.session.loggedIn){
+  if(req.session.user && req.session.user.username != "undefined"){
     if(req.body.published){
-  insertPost(req.body.title.split(" ").join('_'),req.body.author,req.body.content,req.body.des,req.body.title,req.body.under,req.body.published.toString()).then((data)=>{
-    res.json({"status":200})
+  insertPost(titleToPosts(req.body.title),req.body.author,req.body.content,req.body.des,req.body.title,req.body.under,req.body.published.toString()).then((data)=>{
+    if(unpub.getDoc(titleToPosts(req.body.title))){
+      unpub.deleteDoc(titleToPosts(req.body.title)).then((data)=>{
+        res.json({"status":200})
+      })
+    }else{
+      res.json({"status":200})
+    }
+    
   });
     }else{
-      insertPost(req.body.title.split(" ").join('_'),req.body.author,req.body.content,req.body.des,req.body.title,req.body.under,req.body.published.toString()).then((data)=>{
+      unpub.addDoc(titleToPosts(req.body.title),{
+        title: req.body.title,
+        des: req.body.des,
+        under: req.body.under,
+        posts: titleToPosts(req.body.title)
+      })
+      insertPost(titleToPosts(req.body.title),req.body.author,req.body.content,req.body.des,req.body.title,req.body.under,req.body.published.toString()).then((data)=>{
   });
-      setUnpublished(req.body.title.split(" ").join('_')).then((data)=>{
+      setUnpublished(titleToPosts(req.body.title)).then((data)=>{
         res.json({status: 200});
       })
     }
@@ -520,16 +561,29 @@ app.post('/post',(req,res)=>{
   
 })
 app.post('/update',(req,res)=>{
-  if(req.session.loggedIn){
+  if(req.session.user && req.session.user.email !=="undefined"){
     if(req.body.published){
-  updatePost(req.body.title.split(" ").join('_'),req.body.title,req.body.des,req.body.content,req.body.under,req.body.published.toString()).then((data)=>{
-    res.json({"status":200})
-  });
+  updatePost(titleToPosts(req.body.title),req.body.title,req.body.des,req.body.content,req.body.under,req.body.published.toString()).then((data)=>{
+    if(unpub.getDoc(titleToPosts(req.body.title))){
+      unpub.deleteDoc(titleToPosts(req.body.title)).then(d=>{
+        res.json({"status":200})
+      })
     }else{
-      updatePost(req.body.title.split(" ").join('_'),req.body.title,req.body.des,req.body.content,req.body.under,req.body.published.toString()).then((data)=>{
+    res.json({"status":200})
+    }
+  });
+    
+    }else{
+      unpub.addDoc(titleToPosts(req.body.title),{
+        title: req.body.title,
+        des: req.body.des,
+        under: req.body.under,
+        posts: titleToPosts(req.body.title)
+      })
+      updatePost(titleToPosts(req.body.title),req.body.title,req.body.des,req.body.content,req.body.under,req.body.published.toString()).then((data)=>{
 
   });
-      setUnpublished(req.body.title.split(" ").join('_')).then((data)=>{
+      setUnpublished(titleToPosts(req.body.title)).then((data)=>{
         res.json({status: 200});
       })
     }
@@ -550,3 +604,6 @@ app.post("/unsub",(req,res)=>{
 app.listen(3000, () => {
   console.log('server started');
 });
+
+resetDB()
+
