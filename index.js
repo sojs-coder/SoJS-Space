@@ -430,8 +430,7 @@ app.get('/post/:id',(req,res,next)=>{
   var posts = req.params["id"];
   getPostById(TABLE_NAME,{ posts: posts }).then(post => {
     post = post.Item;
-    if( post && post.title){
-      console.log(req.session.user);
+    if(post && post.title){
       res.render('post_view.html',{ 
         post: post,
         loggedIn: req.session.user
